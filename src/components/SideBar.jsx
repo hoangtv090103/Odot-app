@@ -1,6 +1,6 @@
 import skyOfStar from "../images/SkyofStar.jpeg";
 
-const SideBar = ({ state, setState }) => {
+const SideBar = ({ setState }) => {
   return (
     <div className="flex flex-col border h-screen overscroll-none">
       <div className="relative">
@@ -18,34 +18,34 @@ const SideBar = ({ state, setState }) => {
       <div className="flex flex-col text-center">
         <button
           className="text-2xl font-pmarker border-blue-300 h-20 border-4 hover:rounded-lg hover:bg-blue-200 align-middle focus:bg-blue-400"
-          onClick={() => setState("All Tasks")}
+          onClick={() => setState("all_tasks")}
         >
           All tasks
         </button>
         <button
-          className="text-2xl font-pmarker border-slate-300 h-20 border-4 hover:rounded-lg hover:bg-slate-400 align-middle focus:bg-slate-40"
-          onClick={() => setState("Todo")}
+          className="text-2xl font-pmarker border-slate-300 h-20 border-4 hover:rounded-lg hover:bg-slate-400 align-middle focus:bg-slate-400"
+          onClick={() => setState("todo")}
         >
           TODO
         </button>
-        <button
+        {/* <button
           className="text-2xl font-pmarker border-red-300 border-4 h-20 hover:rounded-lg hover:bg-red-400 focus:bg-red-400"
-          onClick={() => setState("Doing")}
+          onClick={() => setState("doing")}
         >
           DOING
-        </button>
+        </button> */}
         <button
           className="text-2xl font-pmarker border-green-300 h-20 border-4 hover:rounded-lg hover:bg-green-400 focus:bg-green-400"
-          onClick={() => setState("Done")}
+          onClick={() => setState("done")}
         >
           DONE
         </button>
-        <button
+        {/* <button
           className="text-2xl font-pmarker border-yellow-200 h-20 border-4 hover:rounded-lg hover:bg-yellow-400 focus:bg-yellow-400"
-          onClick={() => setState("Cancelled")}
+          onClick={() => setState("cancel")}
         >
           CANCELLED
-        </button>
+        </button> */}
       </div>
     </div>
   );

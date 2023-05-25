@@ -1,98 +1,86 @@
-const TodoView = ({ state }) => {
-  const onAddTask = () => {
-    const input = document.querySelector("input");
-    const tasks = document.getElementById("tasks");
+import React, { useEffect, useState } from "react";
+import TodoList from "./TodoList";
+import { useCallback } from "react";
 
-    const task = document.createElement("div");
-    task.classList.add(
-      "flex",
-      "flex-row",
-      "border-2",
-      "mt-3",
-      "rounded-xl",
-      "border-slate-200",
-      "text-xl",
-      "w-[80%]",
-      "p-2",
-      "items-center",
-      "justify-between"
+const TodoView = ({ state, taskList, setTaskList }) => {
+  const [textInput, setTextInput] = useState("");
+  // const [taskList, setTaskList] = useState([]);
+
+  // useEffect() là hàm chạy sau khi render, có công dụng là đặc trưng là một side effect, ví dụ như gọi API, thay đổi DOM, thay đổi state, ...
+  // useEffect() có 2 tham số, tham số thứ nhất là một hàm, tham số thứ 2 là một mảng chứa các biến, khi các biến trong mảng thay đổi thì useEffect() sẽ được gọi lại
+
+  const taskStateChange = useCallback((id) => {
+    setTaskList((taskList) =>
+      taskList.map((todo) =>
+        todo.id === id && !todo.isDone
+          ? { ...todo, state: "DONE", isDone: true }
+          : { ...todo, state: "TODO", isDone: false }
+      )
     );
+  }, []);
 
-    const taskText = document.createElement("div");
-    const taskCheckbox = document.createElement("input");
-    const taskDelete = document.createElement("button");
-
-    taskCheckbox.type = "checkbox";
-    taskCheckbox.classList.add(
-      "w-1/6",
-      "bg-blue-500",
-      "rounded-full",
-      "text-white",
-      "font-bold",
-      "align-middle",
-      "transform"
+  const taskRemove = (id) => {
+    setTaskList((taskList) =>
+      taskList.map((todo) =>
+        todo.id === id && !todo.isDone
+          ? { ...todo, state: "DELETED", isDone: null }
+          : todo
+      )
     );
-
-    taskText.classList.add(
-      "w-full",
-      "h-full",
-      "bg-white",
-      "rounded-full",
-      "text-black",
-      "font-bold",
-      "align-middle",
-      "outline-none",
-    );
-    taskText.innerText = input.value;
-
-    taskDelete.classList.add(
-      "w-1/6",
-      "h-full",
-      "bg-red-400",
-      "rounded-full",
-      "text-white",
-      "font-bold",
-      "align-middle"
-    );
-    taskDelete.innerText = "Delete";
-
-    taskDelete.addEventListener("click", () => {
-      task.remove();
-    });
-
-    input.value = "";
-
-    task.appendChild(taskCheckbox);
-    task.appendChild(taskText);
-    task.appendChild(taskDelete);
-    tasks.appendChild(task);
   };
+
+  const addTask = useCallback(
+    (e) => {
+      // Add new task to taskList
+      setTaskList([
+        {
+          id: taskList.length,
+          text: textInput,
+          state: "TODO",
+          isDone: false,
+        },
+        ...taskList,
+      ]);
+
+      console.log(taskList);
+      setTextInput("");
+    },
+    [taskList, textInput]
+  ); // Khi có sự thay đổi của taskList hoặc textInput thì hàm addTask() mới được gọi lại
+
+  const onTextInputChange = useCallback((e) => {
+    setTextInput(e.target.value);
+  }, []);
 
   return (
     <div className="w-full flex flex-col items-center">
-      <div className="border-b-2 border-slate-200 h-10 text-center p-2 w-full">
+      <div className="border-b-2 border-slate-200 h-10 text-center p-2 w-full font-pmarker">
         {state}
       </div>
-
-      <div className="flex flex-row border-2 mt-3 border-slate-200 rounded-full text-xl w-[80%] p-2">
-        <input
-          className="w-full h-full outline-none"
-          placeholder="Do something..."
-        ></input>
-        <button
-          className="w-1/6 h-full bg-blue-500 rounded-full text-white font-bold disabled:bg-gray-400"
-          onClick={() => {
-            onAddTask();
-          }}
-        >
-          Add
-        </button>
-      </div>
-
-      <div
-        id="tasks"
-        className="flex flex-col-reverse w-full items-center overflow-y-auto max-h-[500px] md:max-h-[700px]"
-      ></div>
+      {state === "All Tasks" || state === "TODO" ? (
+        <div className="flex flex-row border-2 mt-3 border-slate-200 rounded-full text-xl w-[80%] p-2">
+          <input
+            className="w-full h-full outline-none"
+            placeholder="Add a task"
+            onChange={onTextInputChange}
+            value={textInput}
+          ></input>
+          <button
+            className="w-1/6 h-full bg-blue-500 rounded-full text-white font-bold disabled:bg-gray-400"
+            disabled={textInput === ""}
+            onClick={(e) => addTask(e)}
+          >
+            Add
+          </button>
+        </div>
+      ) : null}
+      <TodoList
+        state={state}
+        taskList={taskList}
+        taskStateChange={taskStateChange}
+        taskRemove={taskRemove}
+        setTaskList={setTaskList}
+      />
     </div>
   );
 };
